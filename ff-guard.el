@@ -47,6 +47,7 @@
   "Record down the created parent directory path.")
 
 (defconst ff-guard--msg-create-parent-directory "%s
+
 The file has no parent directory, and you are trying to create the file there.
 Do you want to create it? "
   "Message when creating parent directory.")
