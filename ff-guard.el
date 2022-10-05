@@ -6,7 +6,7 @@
 ;; Maintainer: Shen, Jen-Chieh <jcs090218@gmail.com>
 ;; URL: https://github.com/jcs-elpa/ff-guard
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "26.1") (f "") (s ""))
+;; Package-Requires: ((emacs "26.1") (f "0.20.0") (s "1.9.0"))
 ;; Keywords: convenience
 
 ;; This file is not part of GNU Emacs.
@@ -104,8 +104,7 @@
 
 (defun ff-guard--create-non-existent-directory ()
   "Create the parent directory if not exists."
-  (let* ((current-d-f default-directory)
-         (parent-directory (file-name-directory buffer-file-name))
+  (let* ((parent-directory (file-name-directory buffer-file-name))
          (non-virtual-path (ff-guard--find-starting-not-exists-dir-path parent-directory))
          (created-path (s-replace non-virtual-path "" parent-directory)))
     (when (and (not (ff-guard--directory-p parent-directory))
@@ -114,17 +113,17 @@
       (setq ff-guard-current-created-parent-dir-path created-path))))
 
 (defun ff-guard--find-file (&rest _)
-  ""
+  "For `find-file-hook'."
   (when ff-guard-current-created-parent-dir-path
     (setq ff-guard-created-parent-dir-path ff-guard-current-created-parent-dir-path
           ff-guard-current-created-parent-dir-path nil)))
 
 (defun ff-guard--save-buffer (&rest _)
-  ""
+  "For `save-buffer' advice."
   (setq ff-guard-created-parent-dir-path nil))
 
 (defun ff-guard--kill-this-buffer (&rest _)
-  ""
+  "For `kill-this-buffer' advice."
   (when ff-guard-created-parent-dir-path  ; Remove virtual parent directory.
     (let* ((topest-dir (nth 0 (f-split ff-guard-created-parent-dir-path)))
            (create-dir (s-replace ff-guard-created-parent-dir-path "" default-directory))
