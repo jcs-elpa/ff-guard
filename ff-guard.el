@@ -40,11 +40,16 @@
   :group 'tools
   :link '(url-link :tag "Repository" "https://github.com/jcs-elpa/ff-guard"))
 
-(defvar ff-guard-current-created-parent-dir-path nil
+(defvar ff-guard--current-created-parent-dir-path nil
   "Globally record the virutally created parent dir path.")
 
-(defvar-local ff-guard-created-parent-dir-path nil
+(defvar-local ff-guard--created-parent-dir-path nil
   "Record down the created parent directory path.")
+
+(defconst ff-guard--msg-create-parent-directory "%s
+The file has no parent directory, and you are trying to create the file there.
+Do you want to create it? "
+  "Message when creating parent directory.")
 
 ;;
 ;; (@* "Entry" )
@@ -108,25 +113,26 @@
          (non-virtual-path (ff-guard--find-starting-not-exists-dir-path parent-directory))
          (created-path (s-replace non-virtual-path "" parent-directory)))
     (when (and (not (ff-guard--directory-p parent-directory))
-               (y-or-n-p (format "Directory '%s' does not exist! Create it?" parent-directory)))
+               (y-or-n-p (format ff-guard--msg-create-parent-directory parent-directory)))
       (make-directory parent-directory t)
-      (setq ff-guard-current-created-parent-dir-path created-path))))
+      (setq ff-guard--current-created-parent-dir-path created-path))))
 
 (defun ff-guard--find-file (&rest _)
   "For `find-file-hook'."
-  (when ff-guard-current-created-parent-dir-path
-    (setq ff-guard-created-parent-dir-path ff-guard-current-created-parent-dir-path
-          ff-guard-current-created-parent-dir-path nil)))
+  (when ff-guard--current-created-parent-dir-path
+    (setq ff-guard--created-parent-dir-path ff-guard--current-created-parent-dir-path
+          ff-guard--current-created-parent-dir-path nil)))
 
 (defun ff-guard--save-buffer (&rest _)
   "For `save-buffer' advice."
-  (setq ff-guard-created-parent-dir-path nil))
+  (setq ff-guard--created-parent-dir-path nil))
 
 (defun ff-guard--kill-this-buffer (&rest _)
   "For `kill-this-buffer' advice."
-  (when ff-guard-created-parent-dir-path  ; Remove virtual parent directory.
-    (let* ((topest-dir (nth 0 (f-split ff-guard-created-parent-dir-path)))
-           (create-dir (s-replace ff-guard-created-parent-dir-path "" default-directory))
+  (when (and ff-guard-mode
+             ff-guard--created-parent-dir-path)  ; Remove virtual parent directory.
+    (let* ((topest-dir (nth 0 (f-split ff-guard--created-parent-dir-path)))
+           (create-dir (s-replace ff-guard--created-parent-dir-path "" default-directory))
            (del-path (f-slash (concat create-dir topest-dir))))
       (ignore-errors (delete-directory del-path t))
       (message "[INFO] Remove parent directory that were virtual => '%s'" del-path))))
