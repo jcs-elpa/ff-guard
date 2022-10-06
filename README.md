@@ -6,6 +6,16 @@
 
 [![CI](https://github.com/jcs-elpa/ff-guard/actions/workflows/test.yml/badge.svg)](https://github.com/jcs-elpa/ff-guard/actions/workflows/test.yml)
 
+## 🔗 Usage
+
+Put the following line to your `init.el`,
+
+```elisp
+(ff-guard-mode 1)
+```
+
+Or just `M-x ff-guard-mode`.
+
 ## Contribute
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
