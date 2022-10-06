@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/jcs-elpa/ff-guard/actions/workflows/test.yml/badge.svg)](https://github.com/jcs-elpa/ff-guard/actions/workflows/test.yml)
 
-## 🔗 Usage
+## 🔨 Usage
 
 Put the following line to your `init.el`,
 
