@@ -1,3 +1,5 @@
+;; -*- mode: eask; lexical-binding: t -*-
+
 (package "ff-guard"
          "0.1.0"
          "Create parent directory for non-existent file")
